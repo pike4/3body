@@ -13,6 +13,7 @@ speedMod = 1
 tickCount = 0
 
 u = []
+original = []
 
 class Point:
     def __init__(self, x, y):
@@ -132,7 +133,7 @@ def handleInput(u):
             if event.key == pygame.K_SPACE:
                 reset(u)
             elif event.key == pygame.K_n:
-                randomize(u)
+                randomize()
             elif event.key == pygame.K_p:
                 drawPaths = False
             elif event.key == pygame.K_KP_PLUS:
@@ -196,8 +197,10 @@ def reset(u):
         
         b.path.clear()
         
-def randomize(u):
+def randomize():
+    global u
     reset(u)
+    u = original.copy()
     
     global screenX
     global screenY
@@ -239,6 +242,7 @@ def earthAndSunWorld():
 #u = threeBodyWorld()
 #u = earthAndSunWorld()
 u = trisolaris()
+original = u.copy()
 
 
 screen = initScreen()
@@ -248,13 +252,5 @@ while(running):
     handleInput(u)
     tick(u)
     refresh(screen, font, u)
-
-
-
-
-
-
-
-
 
 

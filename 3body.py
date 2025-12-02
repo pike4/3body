@@ -45,7 +45,7 @@ class Body:
         radius = self.distanceTo(b)
         unitVector = self.unitVectorTo(b)
 
-        force = getF(self.mass, b.mass, radius)
+        force = getF(self, b, radius)
         
         forceX = force * unitVector[0]
         forceY = force * unitVector[1]
@@ -91,11 +91,15 @@ class Body:
         
         return ( ((self.x - b.x) / radius), ((self.y - b.y) / radius))
 
-def getF(m1, m2, r):
+def getF(b1, b2, r):
     global speedMod
     if r == 0:
         return 0
-    return (-6.67 * pow(10, -11)) * ((m1 * m2) / r) * 100000 * speedMod
+        
+    # Assume bodies aren't actually clipping through each other for calculating gravitational force
+    if r < b1.radius or r < b2.radius:
+        r = max(b1.radius, b2.radius)
+    return (-6.67 * pow(10, -11)) * ((b1.mass * b2.mass) / r) * 100000 * speedMod
 
 def tick(u):
     global tickCount
@@ -233,8 +237,8 @@ def earthAndSunWorld():
     return [b1, b2]
 
 #u = threeBodyWorld()
-u = earthAndSunWorld()
-#u = trisolaris()
+#u = earthAndSunWorld()
+u = trisolaris()
 
 
 screen = initScreen()

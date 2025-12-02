@@ -85,10 +85,16 @@ class Body:
         
     def unitVectorTo(self, b):
         radius = self.distanceTo(b)
+        
+        if radius == 0:
+            return (0, 0)
+        
         return ( ((self.x - b.x) / radius), ((self.y - b.y) / radius))
 
 def getF(m1, m2, r):
     global speedMod
+    if r == 0:
+        return 0
     return (-6.67 * pow(10, -11)) * ((m1 * m2) / r) * 100000 * speedMod
 
 def tick(u):
@@ -199,23 +205,36 @@ def randomize(u):
 
 
 def threeBodyWorld():
-    b1 = Body(100000, 400, 500, 0.0, -0.0)
-    b2 = Body(100000, 600, 500, 0.0, -0.07)
-    b3 = Body(100000, 1000, 900, 0.0, 0.0)
-    return [b1, b2, b3]
+    u = []
+    u.append(Body(100000, 400, 500, 0.0, -0.0))
+    u.append(Body(100000, 600, 500, 0.0, -0.07))
+    u.append(Body(100000, 1000, 900, 0.0, 0.0))
+    return u
     
+def trisolaris():
+    u = []
+    u.append(Body(100000, 400, 500, 0.0, -0.0))
+    u.append(Body(100000, 600, 500, 0.0, -0.07))
+    u.append(Body(100000, 1000, 900, 0.0, 0.0))
+    u.append(Body(100, 500, 700, 0.0, 0.0))
+    u[3].radius = 4
+    return u
 
 def earthAndSunWorld():
     b1 = Body(1000, 400, 500, 0.0, -0.0)
     b2 = Body(1, 600, 500, 0.0, -0.67)
+    
+    global speedMod
+    speedMod = 100
     
     b1.radius = 15
     b2.radius = 5
     
     return [b1, b2]
 
-u = threeBodyWorld()
-#u = earthAndSunWorld()
+#u = threeBodyWorld()
+u = earthAndSunWorld()
+#u = trisolaris()
 
 
 screen = initScreen()

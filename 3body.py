@@ -108,6 +108,8 @@ def tick(u):
     
     for b1 in u:
         b1.startTick()
+    
+    for b1 in u:
         for b2 in u:
             if b1 is b2:
                 continue
@@ -135,7 +137,7 @@ def handleInput(u):
             elif event.key == pygame.K_n:
                 randomize()
             elif event.key == pygame.K_p:
-                drawPaths = False
+                drawPaths = !drawPaths
             elif event.key == pygame.K_KP_PLUS:
                 if speedMod < 10000:
                     speedMod *= 10
@@ -218,6 +220,12 @@ def threeBodyWorld():
     u.append(Body(100000, 1000, 900, 0.0, 0.0))
     return u
     
+def coorbit():
+    u = []
+    u.append(Body(100000, 400, 500, 0.0, 0.6))
+    u.append(Body(100000, 700, 500, 0.0, -0.6))
+    return u
+    
 def trisolaris():
     u = []
     u.append(Body(100000, 400, 500, 0.0, -0.0))
@@ -242,6 +250,7 @@ def earthAndSunWorld():
 #u = threeBodyWorld()
 #u = earthAndSunWorld()
 u = trisolaris()
+#u = coorbit()
 original = u.copy()
 
 

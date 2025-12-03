@@ -15,6 +15,15 @@ tickCount = 0
 u = []
 original = []
 
+controlsString = """Space: reset current sim
+R:     New simulation
+Num +: Increase sim speed
+Num -: Decrease sim speed
+P:     Hide path
+Mouse 1: Add body
+"""
+
+
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -33,7 +42,7 @@ class Body:
         self.fY = 0
         self.mass = mass
         
-        self.radius = mass / 8000
+        self.radius = mass / 16000
         
         self.color = (random.randrange(50, 255), random.randrange(50, 255), random.randrange(50, 255))
         self.path = [] # Stores former coordinates to render body's path
@@ -126,18 +135,21 @@ def handleInput(u):
     global running
     global speedMod
     global drawPaths
+    global original
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONUP:
-            u.append(Body(100000, event.pos[0], event.pos[1], 0, 0))
+            if event.button == 1:
+                u.append(Body(100000, event.pos[0], event.pos[1], 0, 0))
         elif event.type == pygame.KEYUP:
+            
             if event.key == pygame.K_SPACE:
                 reset(u)
             elif event.key == pygame.K_n:
                 randomize()
             elif event.key == pygame.K_p:
-                drawPaths = !drawPaths
+                drawPaths = not drawPaths
             elif event.key == pygame.K_KP_PLUS:
                 if speedMod < 10000:
                     speedMod *= 10
@@ -165,11 +177,21 @@ def initFont():
     return pygame.font.SysFont("Arial", 20)
 
 def refresh(screen, font, u):
+    global screenX
+    global screenY
     
     screen.fill((0, 0, 0))
     
     textSurface = font.render(f"Speed: x{speedMod}", True, (255, 255, 255))
     screen.blit(textSurface, (30, 30))
+    
+    offset = 0
+    for line in controlsString.split("\n"):
+        
+        controlsSurface = font.render(line, True, (255, 255, 255))
+        screen.blit(controlsSurface, (screenX - 300, screenY + offset - 200))
+        offset += 20#font.get_height()
+    
     
     for b in u:
         pygame.draw.circle(screen, b.color, (b.x, b.y), b.radius)
@@ -234,10 +256,25 @@ def trisolaris():
     u.append(Body(100, 500, 700, 0.0, 0.0))
     u[3].radius = 4
     return u
+    
+def rings():
+    global drawPaths
+    
+    drawPaths = False
+    u = []
+    u.append(Body(100000, 800, 500, 0, 0))
+    
+    deg = 0.0
+    for i in range(0, 36):
+        b = Body(1, 800 + math.cos(math.radians(deg)) * 200, 500 + math.sin(math.radians(deg)) * 200, math.sin(math.radians(deg)), -math.cos(math.radians(deg)))
+        deg += 10
+        b.radius = 2
+        u.append(b)
+    return u
 
 def earthAndSunWorld():
     b1 = Body(1000, 400, 500, 0.0, -0.0)
-    b2 = Body(1, 600, 500, 0.0, -0.67)
+    b2 = Body(1, 600, 500, 0.0, -1.2)
     
     global speedMod
     speedMod = 100
@@ -251,6 +288,7 @@ def earthAndSunWorld():
 #u = earthAndSunWorld()
 u = trisolaris()
 #u = coorbit()
+#u = rings()
 original = u.copy()
 
 
@@ -261,5 +299,6 @@ while(running):
     handleInput(u)
     tick(u)
     refresh(screen, font, u)
+    pygame.time.delay((10))
 
 
